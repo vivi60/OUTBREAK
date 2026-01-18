@@ -4,71 +4,38 @@
     <meta charset="UTF-8">
     <title>본인 인증 시스템</title>
     <style>
-        body { font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; display: flex; justify-content: center; padding-top: 50px; background: #f0f2f5; }
+        body { font-family: 'Malgun Gothic', sans-serif; display: flex; justify-content: center; padding-top: 50px; background: #f0f2f5; }
         
-        /* [애니메이션 설정] */
-.container { 
-    background: white; 
-    width: 380px; 
-    border: 1px solid #d3d3d3; 
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    transition: opacity 0.4s ease;
-    opacity: 1;
-    /* [수정] 최소 높이를 대폭 줄이거나 제거합니다 */
-    min-height: auto; 
-    display: flex;
-    flex-direction: column;
-    border-radius: 4px;
-    margin-top: 100px; /* 화면 상단에서의 여백 */
-}
+        /* 카드 컨테이너 */
+        .container { 
+            background: white; width: 380px; border: 1px solid #ccc; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: opacity 0.4s ease;
+            opacity: 1;
+            min-height: auto; 
+            display: flex;
+            flex-direction: column;
+        }
 
         .fade-out { opacity: 0; }
 
-        /* [1단계: 세련된 가로 배치 디자인] */
-       /* [1단계: 체크박스 영역] */
-#step-checkbox { 
-    /* [수정] 위아래 여백을 적절히 주어 박스 크기를 조절합니다 */
-    padding: 40px 20px; 
-    display: flex; 
-    justify-content: center; 
-    align-items: center; 
-}
-
-.captcha-widget {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 300px; 
-    height: 74px;
-    background: #f9f9f9;
-    border: 1px solid #d3d3d3;
-    border-radius: 3px;
-    padding: 0 12px;
-    box-shadow: 0 0 4px 1px rgba(0,0,0,0.08);
-}
-        .cb-section { display: flex; align-items: center; gap: 12px; }
-        
-        .cb-section span { 
-            font-size: 15px; 
-            color: #000; 
-            font-weight: 400; 
-            letter-spacing: -0.5px;
+        /* [1단계: 초기 스타일 복구] */
+        #step-checkbox { 
+            padding: 40px 20px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
         }
 
-        .logo-section {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+        .cb-wrapper { 
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+            font-size: 18px; 
+            font-weight: bold; 
         }
 
-        .logo-section span {
-            font-size: 10px;
-            color: #555;
-            margin-top: 4px;
-        }
-
-        /* [2단계: 격자 스타일] */
+        /* [2단계: 격자 인증 스타일] */
         #step-grid { display: none; width: 100%; }
         .grid-header { background: #4a90e2; color: white; padding: 25px; }
         .grid-header h2 { margin: 5px 0 0 0; font-size: 22px; }
@@ -80,6 +47,12 @@
             background: #4a90e2; color: white; border-radius: 50%;
             width: 22px; height: 22px; display: flex; justify-content: center; align-items: center; font-size: 14px;
         }
+
+        /* [3단계: 캐릭터 이름 입력 스타일] */
+        #step-name { display: none; padding: 40px 30px; text-align: center; }
+        .name-input { width: 85%; padding: 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 16px; margin-bottom: 20px; }
+
+        /* 하단 바 */
         .footer { padding: 15px; text-align: right; border-top: 1px solid #eee; background: white; margin-top: auto; }
         .progress-text { float: left; color: #888; font-size: 12px; line-height: 40px; }
         button { background: #4a90e2; color: white; border: none; padding: 10px 25px; cursor: pointer; font-weight: bold; border-radius: 3px; }
@@ -89,16 +62,11 @@
 
     <div id="main-card" class="container">
         <div id="step-checkbox">
-            <div class="captcha-widget">
-                <div class="cb-section">
-                    <input type="checkbox" id="robot" onchange="triggerTransition('grid')" style="width:28px; height:28px; cursor:pointer;">
-                    <span>좀비가 아닙니다.</span>
-                </div>
-                <div class="logo-section">
-                    <img src="https://www.gstatic.com/recaptcha/api2/logo_48.png" width="32">
-                    <span>reCAPTCHA</span>
-                </div>
+            <div class="cb-wrapper">
+                <input type="checkbox" onchange="triggerTransition('grid')" style="width:24px; height:24px; cursor:pointer;">
+                <span>좀비가 아닙니다.</span>
             </div>
+            <img src="https://www.gstatic.com/recaptcha/api2/logo_48.png" width="30">
         </div>
 
         <div id="step-grid">
@@ -112,6 +80,12 @@
                 <button onclick="triggerTransition('next')">확인</button>
             </div>
         </div>
+
+        <div id="step-name">
+            <h3 style="margin-bottom: 20px;">캐릭터의 이름을 입력하세요</h3>
+            <input type="text" id="characterInput" class="name-input" placeholder="정확한 성함을 입력해 주세요.">
+            <button onclick="checkCharacterName()" style="width: 90%;">결과 조회</button>
+        </div>
     </div>
 
     <script>
@@ -121,6 +95,9 @@
             { title: "횡단보도", keyword: "crosswalk" },
             { title: "신호등", keyword: "traffic+light" }
         ];
+
+        // 합격자 명단 데이터
+        const passList = ["강나리","청록","범지태"];
 
         const card = document.getElementById('main-card');
 
@@ -136,8 +113,8 @@
                         currentIdx++;
                         renderGrid();
                     } else {
-                        window.location.href = "합격자발표1.html";
-                        return;
+                        document.getElementById('step-grid').style.display = 'none';
+                        document.getElementById('step-name').style.display = 'block';
                     }
                 }
                 card.classList.remove('fade-out');
@@ -157,6 +134,16 @@
                 tile.style.backgroundImage = `url('https://loremflickr.com/200/200/${quizData[currentIdx].keyword}?random=${i + (currentIdx * 20)}')`;
                 tile.onclick = function() { this.classList.toggle('selected'); };
                 grid.appendChild(tile);
+            }
+        }
+
+        function checkCharacterName() {
+            const inputName = document.getElementById('characterInput').value.trim();
+            if (passList.includes(inputName)) {
+                window.location.href = "합격자발표.html";
+            } else {
+                alert("일치하는 정보가 없습니다.");
+                window.location.href = "불합격자발표.html";
             }
         }
     </script>

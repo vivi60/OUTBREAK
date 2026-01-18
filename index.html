@@ -4,23 +4,72 @@
     <meta charset="UTF-8">
     <title>본인 인증 시스템</title>
     <style>
-        body { font-family: 'Malgun Gothic', sans-serif; display: flex; justify-content: center; padding-top: 50px; background: #f0f2f5; }
+        body { font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; display: flex; justify-content: center; padding-top: 50px; background: #f0f2f5; }
         
         /* [애니메이션 설정] */
-        .container { 
-            background: white; width: 380px; border: 1px solid #ccc; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            transition: opacity 0.4s ease; /* 페이드 효과 속도 */
-            opacity: 1;
-        }
+.container { 
+    background: white; 
+    width: 380px; 
+    border: 1px solid #d3d3d3; 
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transition: opacity 0.4s ease;
+    opacity: 1;
+    /* [수정] 최소 높이를 대폭 줄이거나 제거합니다 */
+    min-height: auto; 
+    display: flex;
+    flex-direction: column;
+    border-radius: 4px;
+    margin-top: 100px; /* 화면 상단에서의 여백 */
+}
 
-        /* 페이드 아웃 상태 */
         .fade-out { opacity: 0; }
 
-        /* [기존 스타일 유지] */
-        #step-checkbox { padding: 30px; display: flex; align-items: center; justify-content: space-between; }
-        .cb-wrapper { display: flex; align-items: center; gap: 15px; font-size: 18px; font-weight: bold; }
-        #step-grid { display: none; }
+        /* [1단계: 세련된 가로 배치 디자인] */
+       /* [1단계: 체크박스 영역] */
+#step-checkbox { 
+    /* [수정] 위아래 여백을 적절히 주어 박스 크기를 조절합니다 */
+    padding: 40px 20px; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+}
+
+.captcha-widget {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 300px; 
+    height: 74px;
+    background: #f9f9f9;
+    border: 1px solid #d3d3d3;
+    border-radius: 3px;
+    padding: 0 12px;
+    box-shadow: 0 0 4px 1px rgba(0,0,0,0.08);
+}
+        .cb-section { display: flex; align-items: center; gap: 12px; }
+        
+        .cb-section span { 
+            font-size: 15px; 
+            color: #000; 
+            font-weight: 400; 
+            letter-spacing: -0.5px;
+        }
+
+        .logo-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-section span {
+            font-size: 10px;
+            color: #555;
+            margin-top: 4px;
+        }
+
+        /* [2단계: 격자 스타일] */
+        #step-grid { display: none; width: 100%; }
         .grid-header { background: #4a90e2; color: white; padding: 25px; }
         .grid-header h2 { margin: 5px 0 0 0; font-size: 22px; }
         .grid-body { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; padding: 4px; background: #eee; }
@@ -31,7 +80,7 @@
             background: #4a90e2; color: white; border-radius: 50%;
             width: 22px; height: 22px; display: flex; justify-content: center; align-items: center; font-size: 14px;
         }
-        .footer { padding: 15px; text-align: right; border-top: 1px solid #eee; background: white; }
+        .footer { padding: 15px; text-align: right; border-top: 1px solid #eee; background: white; margin-top: auto; }
         .progress-text { float: left; color: #888; font-size: 12px; line-height: 40px; }
         button { background: #4a90e2; color: white; border: none; padding: 10px 25px; cursor: pointer; font-weight: bold; border-radius: 3px; }
     </style>
@@ -40,11 +89,16 @@
 
     <div id="main-card" class="container">
         <div id="step-checkbox">
-            <div class="cb-wrapper">
-                <input type="checkbox" id="robot" onchange="triggerTransition('grid')" style="width:26px; height:26px; cursor:pointer;">
-                <span>로봇이 아닙니다.</span>
+            <div class="captcha-widget">
+                <div class="cb-section">
+                    <input type="checkbox" id="robot" onchange="triggerTransition('grid')" style="width:28px; height:28px; cursor:pointer;">
+                    <span>좀비가 아닙니다.</span>
+                </div>
+                <div class="logo-section">
+                    <img src="https://www.gstatic.com/recaptcha/api2/logo_48.png" width="32">
+                    <span>reCAPTCHA</span>
+                </div>
             </div>
-            <img src="https://www.gstatic.com/recaptcha/api2/logo_48.png" width="35">
         </div>
 
         <div id="step-grid">
@@ -70,12 +124,8 @@
 
         const card = document.getElementById('main-card');
 
-        // [핵심] 페이드 인/아웃 전환 함수
         function triggerTransition(type) {
-            // 1. 페이드 아웃 시작
             card.classList.add('fade-out');
-
-            // 2. 화면이 완전히 가려진 후(0.4초 뒤) 데이터 교체
             setTimeout(() => {
                 if (type === 'grid') {
                     document.getElementById('step-checkbox').style.display = 'none';
@@ -90,8 +140,6 @@
                         return;
                     }
                 }
-                
-                // 3. 데이터 교체 후 다시 페이드 인
                 card.classList.remove('fade-out');
             }, 400); 
         }
@@ -100,11 +148,9 @@
             const grid = document.getElementById('imageGrid');
             const title = document.getElementById('targetTitle');
             const progress = document.getElementById('progressInfo');
-
             grid.innerHTML = '';
             title.innerText = quizData[currentIdx].title;
             progress.innerText = `단계: ${currentIdx + 1} / ${quizData.length}`;
-
             for (let i = 0; i < 9; i++) {
                 const tile = document.createElement('div');
                 tile.className = 'tile';

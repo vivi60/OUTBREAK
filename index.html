@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>본인 인증 시스템</title>
+    <style>
+        body { font-family: 'Malgun Gothic', sans-serif; display: flex; justify-content: center; padding-top: 50px; background: #f0f2f5; }
+        
+        /* [애니메이션 설정] */
+        .container { 
+            background: white; width: 380px; border: 1px solid #ccc; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: opacity 0.4s ease; /* 페이드 효과 속도 */
+            opacity: 1;
+        }
+
+        /* 페이드 아웃 상태 */
+        .fade-out { opacity: 0; }
+
+        /* [기존 스타일 유지] */
+        #step-checkbox { padding: 30px; display: flex; align-items: center; justify-content: space-between; }
+        .cb-wrapper { display: flex; align-items: center; gap: 15px; font-size: 18px; font-weight: bold; }
+        #step-grid { display: none; }
+        .grid-header { background: #4a90e2; color: white; padding: 25px; }
+        .grid-header h2 { margin: 5px 0 0 0; font-size: 22px; }
+        .grid-body { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; padding: 4px; background: #eee; }
+        .tile { width: 100%; aspect-ratio: 1; background-color: #ddd; cursor: pointer; background-size: cover; position: relative; }
+        .tile.selected { outline: 5px solid #4a90e2; outline-offset: -5px; z-index: 5; }
+        .tile.selected::after {
+            content: '✓'; position: absolute; top: 8px; left: 8px;
+            background: #4a90e2; color: white; border-radius: 50%;
+            width: 22px; height: 22px; display: flex; justify-content: center; align-items: center; font-size: 14px;
+        }
+        .footer { padding: 15px; text-align: right; border-top: 1px solid #eee; background: white; }
+        .progress-text { float: left; color: #888; font-size: 12px; line-height: 40px; }
+        button { background: #4a90e2; color: white; border: none; padding: 10px 25px; cursor: pointer; font-weight: bold; border-radius: 3px; }
+    </style>
+</head>
+<body>
+
+    <div id="main-card" class="container">
+        <div id="step-checkbox">
+            <div class="cb-wrapper">
+                <input type="checkbox" id="robot" onchange="triggerTransition('grid')" style="width:26px; height:26px; cursor:pointer;">
+                <span>로봇이 아닙니다.</span>
+            </div>
+            <img src="https://www.gstatic.com/recaptcha/api2/logo_48.png" width="35">
+        </div>
+
+        <div id="step-grid">
+            <div class="grid-header">
+                <p style="margin:0; font-size:13px; opacity:0.9;">다음에 해당하는 이미지를 모두 선택하세요.</p>
+                <h2 id="targetTitle">질문 내용</h2>
+            </div>
+            <div class="grid-body" id="imageGrid"></div>
+            <div class="footer">
+                <span class="progress-text" id="progressInfo">단계: 1 / 3</span>
+                <button onclick="triggerTransition('next')">확인</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentIdx = 0;
+        const quizData = [
+            { title: "도로 표지판", keyword: "traffic+sign" },
+            { title: "횡단보도", keyword: "crosswalk" },
+            { title: "신호등", keyword: "traffic+light" }
+        ];
+
+        const card = document.getElementById('main-card');
+
+        // [핵심] 페이드 인/아웃 전환 함수
+        function triggerTransition(type) {
+            // 1. 페이드 아웃 시작
+            card.classList.add('fade-out');
+
+            // 2. 화면이 완전히 가려진 후(0.4초 뒤) 데이터 교체
+            setTimeout(() => {
+                if (type === 'grid') {
+                    document.getElementById('step-checkbox').style.display = 'none';
+                    document.getElementById('step-grid').style.display = 'block';
+                    renderGrid();
+                } else if (type === 'next') {
+                    if (currentIdx < quizData.length - 1) {
+                        currentIdx++;
+                        renderGrid();
+                    } else {
+                        window.location.href = "합격자발표1.html";
+                        return;
+                    }
+                }
+                
+                // 3. 데이터 교체 후 다시 페이드 인
+                card.classList.remove('fade-out');
+            }, 400); 
+        }
+
+        function renderGrid() {
+            const grid = document.getElementById('imageGrid');
+            const title = document.getElementById('targetTitle');
+            const progress = document.getElementById('progressInfo');
+
+            grid.innerHTML = '';
+            title.innerText = quizData[currentIdx].title;
+            progress.innerText = `단계: ${currentIdx + 1} / ${quizData.length}`;
+
+            for (let i = 0; i < 9; i++) {
+                const tile = document.createElement('div');
+                tile.className = 'tile';
+                tile.style.backgroundImage = `url('https://loremflickr.com/200/200/${quizData[currentIdx].keyword}?random=${i + (currentIdx * 20)}')`;
+                tile.onclick = function() { this.classList.toggle('selected'); };
+                grid.appendChild(tile);
+            }
+        }
+    </script>
+</body>
+</html>

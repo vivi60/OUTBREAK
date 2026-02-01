@@ -5,57 +5,45 @@
     <title>본인 인증 시스템</title>
     <style>
         body { font-family: 'Malgun Gothic', sans-serif; display: flex; justify-content: center; padding-top: 50px; background: #f0f2f5; }
-        
-        /* 카드 컨테이너 */
-        .container { 
-            background: white; width: 380px; border: 1px solid #ccc; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            transition: opacity 0.4s ease;
-            opacity: 1;
-            min-height: auto; 
-            display: flex;
-            flex-direction: column;
-        }
-
+        .container { background: white; width: 380px; border: 1px solid #ccc; box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: opacity 0.4s ease; }
         .fade-out { opacity: 0; }
 
-        /* [1단계: 초기 스타일 복구] */
-        #step-checkbox { 
-            padding: 40px 20px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: space-between; 
-        }
+        /* [1단계 스타일] */
+        #step-checkbox { padding: 40px 20px; display: flex; align-items: center; justify-content: space-between; }
+        .cb-wrapper { display: flex; align-items: center; gap: 10px; font-size: 18px; font-weight: bold; }
 
-        .cb-wrapper { 
-            display: flex; 
-            align-items: center; 
-            gap: 10px; 
-            font-size: 18px; 
-            font-weight: bold; 
-        }
-
-        /* [2단계: 격자 인증 스타일] */
+        /* [2단계 격자 스타일] */
         #step-grid { display: none; width: 100%; }
-        .grid-header { background: #4a90e2; color: white; padding: 25px; }
+        .grid-header { background: #414141; color: white; padding: 25px; }
         .grid-header h2 { margin: 5px 0 0 0; font-size: 22px; }
-        .grid-body { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; padding: 4px; background: #eee; }
-        .tile { width: 100%; aspect-ratio: 1; background-color: #ddd; cursor: pointer; background-size: cover; position: relative; }
-        .tile.selected { outline: 5px solid #4a90e2; outline-offset: -5px; z-index: 5; }
-        .tile.selected::after {
-            content: '✓'; position: absolute; top: 8px; left: 8px;
-            background: #4a90e2; color: white; border-radius: 50%;
-            width: 22px; height: 22px; display: flex; justify-content: center; align-items: center; font-size: 14px;
+        
+        /* 3x3 격자 설정 */
+        .grid-body { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; padding: 2px; background: #fff; }
+        .tile { 
+            width: 100%; 
+            aspect-ratio: 1; 
+            cursor: pointer; 
+            background-repeat: no-repeat;
+            background-size: 300% 300%; /* 큰 이미지를 3배 크기로 설정하여 조각내기 */
+            position: relative;
+            border: 1px solid rgba(255,255,255,0.2);
         }
 
-        /* [3단계: 캐릭터 이름 입력 스타일] */
+        /* 선택 시 파란색 테두리와 체크 표시 */
+        .tile.selected { outline: 5px solid #414141; outline-offset: -5px; z-index: 5; }
+        .tile.selected::after {
+            content: '✓'; position: absolute; top: 5px; left: 5px;
+            background: #414141; color: white; border-radius: 50%;
+            width: 20px; height: 20px; display: flex; justify-content: center; align-items: center; font-size: 12px;
+        }
+
+        /* [3단계 이름 입력 스타일] */
         #step-name { display: none; padding: 40px 30px; text-align: center; }
         .name-input { width: 85%; padding: 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 16px; margin-bottom: 20px; }
 
-        /* 하단 바 */
-        .footer { padding: 15px; text-align: right; border-top: 1px solid #eee; background: white; margin-top: auto; }
+        .footer { padding: 15px; text-align: right; border-top: 1px solid #eee; background: white; }
         .progress-text { float: left; color: #888; font-size: 12px; line-height: 40px; }
-        button { background: #4a90e2; color: white; border: none; padding: 10px 25px; cursor: pointer; font-weight: bold; border-radius: 3px; }
+        button { background: #414141; color: white; border: none; padding: 10px 25px; cursor: pointer; font-weight: bold; border-radius: 3px; }
     </style>
 </head>
 <body>
@@ -82,23 +70,23 @@
         </div>
 
         <div id="step-name">
-            <h3 style="margin-bottom: 20px;">캐릭터의 이름을 입력하세요</h3>
-            <input type="text" id="characterInput" class="name-input" placeholder="정확한 성함을 입력해 주세요.">
+            <h3 style="margin-bottom: 10px;">캐릭터의 이름을 입력하세요</h3>
+            <p style="font-size: 13px; color: #666; margin-bottom: 20px;">* 띄어쓰기 없이 입력해주세요.</p>
+            <input type="text" id="characterInput" class="name-input" placeholder="이름을 입력해 주세요.">
             <button onclick="checkCharacterName()" style="width: 90%;">결과 조회</button>
         </div>
     </div>
 
     <script>
         let currentIdx = 0;
+        // 각 단계별 하나의 큰 이미지 경로만 넣으면 됩니다.
         const quizData = [
-            { title: "도로 표지판", keyword: "traffic+sign" },
-            { title: "횡단보도", keyword: "crosswalk" },
-            { title: "신호등", keyword: "traffic+light" }
+            { title: "사람", image: "./image/강나리두상.png" },
+            { title: "사람", image: "./image/청록두상.png" },
+            { title: "사람", image: "./image/범지태두상.png" }
         ];
 
-        // 합격자 명단 데이터
         const passList = ["강나리","청록","범지태"];
-
         const card = document.getElementById('main-card');
 
         function triggerTransition(type) {
@@ -121,29 +109,39 @@
             }, 400); 
         }
 
+        // 하나의 이미지를 3x3으로 쪼개서 배치하는 핵심 로직
         function renderGrid() {
             const grid = document.getElementById('imageGrid');
             const title = document.getElementById('targetTitle');
             const progress = document.getElementById('progressInfo');
+            const currentImg = quizData[currentIdx].image;
+
             grid.innerHTML = '';
             title.innerText = quizData[currentIdx].title;
             progress.innerText = `단계: ${currentIdx + 1} / ${quizData.length}`;
+
             for (let i = 0; i < 9; i++) {
                 const tile = document.createElement('div');
                 tile.className = 'tile';
-                tile.style.backgroundImage = `url('https://loremflickr.com/200/200/${quizData[currentIdx].keyword}?random=${i + (currentIdx * 20)}')`;
+                tile.style.backgroundImage = `url('${currentImg}')`;
+                
+                // 가로(x), 세로(y) 좌표 계산 (0%, 50%, 100%)
+                const x = (i % 3) * 50;
+                const y = Math.floor(i / 3) * 50;
+                tile.style.backgroundPosition = `${x}% ${y}%`;
+                
                 tile.onclick = function() { this.classList.toggle('selected'); };
                 grid.appendChild(tile);
             }
         }
 
         function checkCharacterName() {
-            const inputName = document.getElementById('characterInput').value.trim();
+            const inputName = document.getElementById('characterInput').value.replace(/\s+/g, "");
             if (passList.includes(inputName)) {
-                window.location.href = "합격자발표.html";
+                window.location.href = `합격자발표.html?name=${encodeURIComponent(inputName)}`;
             } else {
                 alert("일치하는 정보가 없습니다.");
-                window.location.href = "불합격자발표.html";
+                window.location.href = `불합격자발표.html?name=${encodeURIComponent(inputName)}`;
             }
         }
     </script>

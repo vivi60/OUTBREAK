@@ -18,8 +18,27 @@
         .status-badge {
             display: inline-block; padding: 10px 20px; border-radius: 30px;
             font-weight: bold; margin-bottom: 25px;
-            background-color: #e6f4ea; color: #1e8e3e; /* 합격 강조색 */
+            background-color: #e6f4ea; color: #1e8e3e;
         }
+
+        /* 캐릭터 부유 애니메이션 설정 */
+        .character-container {
+            margin: 10px 0 25px 0;
+            display: flex;
+            justify-content: center;
+            height: 120px; /* 이미지 공간 확보 */
+            align-items: center;
+        }
+        .floating-character {
+            width: 100px; /* 캐릭터 크기 조절 */
+            height: auto;
+            animation: floating 3s ease-in-out infinite;
+        }
+        @keyframes floating {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+        }
+
         h1 { font-size: 26px; color: #333; margin: 10px 0; }
         .message { color: #666; line-height: 1.8; margin-bottom: 30px; }
         .info-box {
@@ -29,13 +48,16 @@
         .info-line { display: flex; justify-content: space-between; margin: 8px 0; }
         .label { color: #888; font-size: 14px; }
         .value { font-weight: bold; color: #333; }
-        .notice { font-size: 13px; color: #aaa; }
     </style>
 </head>
 <body>
 
     <div class="result-card">
         <div class="status-badge">🎉 최종 합격을 축하드립니다!</div>
+        
+        <div class="character-container">
+            <img id="characterImg" src="" alt="캐릭터" class="floating-character" style="display:none;">
+        </div>
         
         <h1>합격 통지서</h1>
         <p class="message">귀하께서는 본 커뮤니티의 엄격한 심사 과정을 거쳐<br><strong>최종 합격자</strong>로 선정되셨음을 알려드립니다.</p>
@@ -49,24 +71,40 @@
                 <span class="label">조회 일시</span>
                 <span class="value" id="currentDate"></span>
             </div>
-            <div class="info-line">
-                <span class="label">지원진영</span>
-                <span class="value">생존자 그룹</span>
-            </div>
         </div>
-
-        <p class="notice">※ 합격자 안내 사항은 추후 개별 공지될 예정입니다.</p>
     </div>
 
     <script>
-        // URL에서 이름을 가져와서 표시하는 로직
+        // 1. 캐릭터별 이미지 매칭 데이터
+        const characterData = {
+            "강나리": "./image/강나리도트.png",
+            "청록": "./image/청록도트.png",
+            "범지태": "./image/범지태도트.png"
+            // 필요한 캐릭터를 여기에 계속 추가하세요.
+        };
+
+        // 2. URL에서 이름 가져오기
         const urlParams = new URLSearchParams(window.location.search);
-        const userName = urlParams.get('name') || "사용자";
-        document.getElementById('displayName').innerText = userName;
+        const userName = urlParams.get('name');
+        const displayElem = document.getElementById('displayName');
+        const imgElem = document.getElementById('characterImg');
+
+        if (userName) {
+            displayElem.innerText = userName;
+            
+            // 3. 이름에 맞는 이미지가 있는지 확인 후 교체
+            if (characterData[userName]) {
+                imgElem.src = characterData[userName];
+                imgElem.style.display = "block";
+            }
+        } else {
+            displayElem.innerText = "사용자";
+        }
 
         // 현재 날짜 표시
         const today = new Date();
-        document.getElementById('currentDate').innerText = today.toLocaleDateString() + " " + today.toLocaleTimeString();
+        displayElem.parentElement.parentElement.querySelector('#currentDate').innerText = 
+            today.toLocaleDateString() + " " + today.toLocaleTimeString();
     </script>
 </body>
 </html>

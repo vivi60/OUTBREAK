@@ -146,7 +146,7 @@ body {
             }, 400); 
         }
 
-        // 하나의 이미지를 3x3으로 쪼개서 배치하는 핵심 로직
+        // 하나의 이미지를 3x3으로 쪼개서 배치하는 로직
         function renderGrid() {
             const grid = document.getElementById('imageGrid');
             const title = document.getElementById('targetTitle');
@@ -162,7 +162,6 @@ body {
                 tile.className = 'tile';
                 tile.style.backgroundImage = `url('${currentImg}')`;
                 
-                // 가로(x), 세로(y) 좌표 계산 (0%, 50%, 100%)
                 const x = (i % 3) * 50;
                 const y = Math.floor(i / 3) * 50;
                 tile.style.backgroundPosition = `${x}% ${y}%`;
@@ -172,14 +171,23 @@ body {
             }
         }
 
-        if (passList.includes(inputName)) {
-    // 변경된 영어 파일명으로 수정
-    window.location.href = `success.html?name=${encodeURIComponent(inputName)}`;
-} else {
-    alert("일치하는 정보가 없습니다.");
-    // 변경된 영어 파일명으로 수정
-    window.location.href = `fail.html?name=${encodeURIComponent(inputName)}`;
-}
+        // [추가된 함수] 이름을 확인하고 페이지를 이동시키는 함수
+        function checkCharacterName() {
+            const inputName = document.getElementById('characterInput').value.trim();
+            
+            if (!inputName) {
+                alert("이름을 입력해주세요.");
+                return;
+            }
+
+            if (passList.includes(inputName)) {
+                // 성공 페이지로 이동
+                window.location.href = `success.html?name=${encodeURIComponent(inputName)}`;
+            } else {
+                // 실패 페이지로 이동
+                window.location.href = `fail.html?name=${encodeURIComponent(inputName)}`;
+            }
+        }
     </script>
 </body>
 </html>

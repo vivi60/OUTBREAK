@@ -172,15 +172,14 @@ body {
             }
         }
 
-        function checkCharacterName() {
-            const inputName = document.getElementById('characterInput').value.replace(/\s+/g, "");
-            if (passList.includes(inputName)) {
-                window.location.href = `합격자발표.html?name=${encodeURIComponent(inputName)}`;
-            } else {
-                alert("일치하는 정보가 없습니다.");
-                window.location.href = `불합격자발표.html?name=${encodeURIComponent(inputName)}`;
-            }
-        }
+        if (passList.includes(inputName)) {
+    // 변경된 영어 파일명으로 수정
+    window.location.href = `success.html?name=${encodeURIComponent(inputName)}`;
+} else {
+    alert("일치하는 정보가 없습니다.");
+    // 변경된 영어 파일명으로 수정
+    window.location.href = `fail.html?name=${encodeURIComponent(inputName)}`;
+}
     </script>
 </body>
 </html>

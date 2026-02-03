@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>불참석</title>
+    <style>
+        body { 
+            font-family: 'Pretendard', 'Malgun Gothic', sans-serif; 
+            background-color: #fcfcfc; 
+            display: flex; justify-content: center; align-items: center; 
+            height: 100vh; margin: 0; 
+        }
+        .result-card { 
+            background: white; width: 420px; padding: 50px 40px; 
+            border-radius: 12px; border: 1px solid #eee;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05); text-align: center;
+        }
+        .status-badge {
+            display: inline-block; padding: 10px 20px; border-radius: 30px;
+            font-weight: bold; margin-bottom: 25px;
+            background-color: #fce8e6; color: #d93025; /* 불합격 강조색 */
+        }
+        h1 { font-size: 24px; color: #333; margin: 10px 0; }
+        .message { color: #777; line-height: 1.8; margin-bottom: 30px; font-size: 15px; }
+        .info-box {
+            background: #fafafa; padding: 20px; border-radius: 10px;
+            margin-bottom: 25px; text-align: left; border: 1px dotted #ccc;
+        }
+        .info-line { display: flex; justify-content: space-between; margin: 8px 0; }
+        .label { color: #999; font-size: 14px; }
+        .value { font-weight: 500; color: #555; }
+        .notice { font-size: 13px; color: #bbb; }
+    </style>
+</head>
+<body>
+
+    <div class="result-card">
+        <div class="status-badge">등장인물을 열람할 수 없습니다.</div>
+        
+        <h1>OUTBREAK</h1>
+        <p class="message">청송대학교의 밖, 당신은 여전히 배회한다. <br>살아남기 위한 선택을 하길 바라며 달리자.</p>
+
+        <div class="info-box">
+            <div class="info-line">
+                <span class="label">입력하신 이름</span>
+                <span class="value" id="displayName">조회 중...</span>
+            </div>
+            <div class="info-line">
+                <span class="label">결과</span>
+                <span class="value">열람불가</span>
+            </div>
+        </div>
+
+        <p class="notice">지원해주신 점 깊이 감사드리며,<br>앞으로의 행보에 행운이 따르길 기원합니다.</p>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const userName = urlParams.get('name') || "";
+        document.getElementById('displayName').innerText = userName;
+    </script>
+</body>
+</html>

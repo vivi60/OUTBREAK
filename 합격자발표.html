@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>참석</title>
+    <style>
+        body { 
+            font-family: 'Pretendard', 'Malgun Gothic', sans-serif; 
+            background-color: #f4f7f9; 
+            display: flex; justify-content: center; align-items: center; 
+            height: 100vh; margin: 0; 
+        }
+        .result-card { 
+            background: white; width: 420px; padding: 50px 40px; 
+            border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); 
+            text-align: center;
+        }
+        .status-badge {
+            display: inline-block; padding: 10px 20px; border-radius: 30px;
+            font-weight: bold; margin-bottom: 25px;
+            background-color: #e6f4ea; color: #1e8e3e;
+        }
+
+        /* 캐릭터 이미지 및 애니메이션 관련 CSS 삭제됨 */
+
+        h1 { font-size: 26px; color: #333; margin: 10px 0; }
+        .message { color: #666; line-height: 1.8; margin-bottom: 30px; }
+        .info-box {
+            background: #f8f9fa; padding: 20px; border-radius: 10px;
+            margin-bottom: 25px; text-align: left; border: 1px solid #eee;
+        }
+        .info-line { display: flex; justify-content: space-between; margin: 8px 0; }
+        .label { color: #888; font-size: 14px; }
+        .value { font-weight: bold; color: #333; }
+    </style>
+</head>
+<body>
+
+    <div class="result-card">
+        <div class="status-badge">등장인물을 열람합니다.</div>
+        
+        <h1>OUTBREAK</h1>
+        <p class="message">청송대학교의 사회관, 모 교실의 안이다. <br>당신은 어떤 선택을 할 것인가.</p>
+
+        <div class="info-box">
+            <div class="info-line">
+                <span class="label">성함</span>
+                <span class="value" id="displayName">조회 중...</span>
+            </div>
+            <div class="info-line">
+                <span class="label">조회 일시</span>
+                <span class="value" id="currentDate"></span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // URL에서 이름 가져오기
+        const urlParams = new URLSearchParams(window.location.search);
+        const userName = urlParams.get('name');
+        const displayElem = document.getElementById('displayName');
+
+        if (userName) {
+            displayElem.innerText = userName;
+            // 이미지 매칭 및 출력 로직 삭제됨
+        } else {
+            displayElem.innerText = "";
+        }
+
+        // 현재 날짜 표시
+        const today = new Date();
+        document.getElementById('currentDate').innerText = 
+            today.toLocaleDateString() + " " + today.toLocaleTimeString();
+    </script>
+</body>
+</html>

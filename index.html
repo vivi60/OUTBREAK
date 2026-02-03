@@ -4,7 +4,29 @@
     <meta charset="UTF-8">
     <title>본인 인증 시스템</title>
     <style>
-        body { font-family: 'Malgun Gothic', sans-serif; display: flex; justify-content: center; padding-top: 50px; background: #f0f2f5; }
+
+        /* 1. 최상단에 모든 요소에 대해 박스 모델 설정을 추가하는 것이 좋습니다. */
+* { box-sizing: border-box; }
+
+        /* index.html의 style 부분 수정 */
+body { 
+    font-family: 'Malgun Gothic', sans-serif; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; /* 추가: 수직 중앙 정렬 */
+    height: 100vh; 
+    margin: 0; 
+    background: #f0f2f5; 
+    /* padding-top: 50px;  <-- 이 부분을 삭제하거나 주석 처리하세요 */
+/* 배경 설정 */
+    background-image: url('https://firebasestorage.googleapis.com/v0/b/cheongjuca.firebasestorage.app/o/image%2F%E1%84%92%E1%85%A1%E1%86%B8%E1%84%80%E1%85%A7%E1%86%A8%E1%84%87%E1%85%A2%E1%84%80%E1%85%A7%E1%86%BC.png?alt=media&token=ee7c1dc2-9ac4-45f6-9463-f54caff633c0'); /* 이미지 경로를 넣어주세요 */
+    background-size: cover;      /* 화면에 꽉 차게 조절 */
+    background-position: center; /* 가운데 정렬 */
+    background-repeat: no-repeat;
+    background-attachment: fixed; /* 스크롤해도 배경 고정 */
+}
+
+
         .container { background: white; width: 380px; border: 1px solid #ccc; box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: opacity 0.4s ease; }
         .fade-out { opacity: 0; }
 
@@ -18,16 +40,29 @@
         .grid-header h2 { margin: 5px 0 0 0; font-size: 22px; }
         
         /* 3x3 격자 설정 */
-        .grid-body { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; padding: 2px; background: #fff; }
-        .tile { 
-            width: 100%; 
-            aspect-ratio: 1; 
-            cursor: pointer; 
-            background-repeat: no-repeat;
-            background-size: 300% 300%; /* 큰 이미지를 3배 크기로 설정하여 조각내기 */
-            position: relative;
-            border: 1px solid rgba(255,255,255,0.2);
-        }
+        /* 2. .grid-body 부분 수정 */
+.grid-body { 
+    display: grid; 
+    grid-template-columns: repeat(3, 1fr); 
+    gap: 2px; 
+    padding: 2px; 
+    background: #fff; 
+    width: 100%; /* 부모 너비에 딱 맞춤 */
+}
+
+/* 3. .tile 부분 수정 */
+.tile { 
+    width: 100%; 
+    aspect-ratio: 1; 
+    cursor: pointer; 
+    background-repeat: no-repeat;
+    background-size: 300% 300%; 
+    position: relative;
+    border: 1px solid rgba(255,255,255,0.2);
+    /* 여기에 이미 * { box-sizing: border-box; }를 추가했다면 중복되지 않아도 되지만, 
+       확실하게 하기 위해 넣어줍니다. */
+    box-sizing: border-box; 
+}
 
         /* 선택 시 파란색 테두리와 체크 표시 */
         .tile.selected { outline: 5px solid #414141; outline-offset: -5px; z-index: 5; }
@@ -60,7 +95,7 @@
         <div id="step-grid">
             <div class="grid-header">
                 <p style="margin:0; font-size:13px; opacity:0.9;">다음에 해당하는 이미지를 모두 선택하세요.</p>
-                <h2 id="targetTitle">질문 내용</h2>
+                <h2 id="targetTitle">질문</h2>
             </div>
             <div class="grid-body" id="imageGrid"></div>
             <div class="footer">
@@ -70,9 +105,9 @@
         </div>
 
         <div id="step-name">
-            <h3 style="margin-bottom: 10px;">캐릭터의 이름을 입력하세요</h3>
+            <h3 style="margin-bottom: 10px;">등장인물의 이름을 입력하세요</h3>
             <p style="font-size: 13px; color: #666; margin-bottom: 20px;">* 띄어쓰기 없이 입력해주세요.</p>
-            <input type="text" id="characterInput" class="name-input" placeholder="이름을 입력해 주세요.">
+            <input type="text" id="characterInput" class="name-input" placeholder="">
             <button onclick="checkCharacterName()" style="width: 90%;">결과 조회</button>
         </div>
     </div>
@@ -81,12 +116,14 @@
         let currentIdx = 0;
         // 각 단계별 하나의 큰 이미지 경로만 넣으면 됩니다.
         const quizData = [
-            { title: "사람", image: "./image/강나리두상.png" },
-            { title: "사람", image: "./image/청록두상.png" },
-            { title: "사람", image: "./image/범지태두상.png" }
+            { title: "등장인물", image: "https://firebasestorage.googleapis.com/v0/b/cheongjuca.firebasestorage.app/o/image%2F1.png?alt=media&token=dfc5f1a9-4756-416f-8a57-e094339cbd80" },
+            { title: "등장인물", image: "https://firebasestorage.googleapis.com/v0/b/cheongjuca.firebasestorage.app/o/image%2F3.png?alt=media&token=1e18f704-be4a-4522-bba4-624a884238cc" },
+            { title: "등장인물", image: "https://firebasestorage.googleapis.com/v0/b/cheongjuca.firebasestorage.app/o/image%2F4.png?alt=media&token=ba5d110b-d02c-4b58-b298-4625148f5dd0" },
+            { title: "등장인물", image: "https://firebasestorage.googleapis.com/v0/b/cheongjuca.firebasestorage.app/o/image%2F5.png?alt=media&token=0839d970-6b8a-4845-bd2a-0d6a5dd614ef" },
+            { title: "등장인물", image: "https://firebasestorage.googleapis.com/v0/b/cheongjuca.firebasestorage.app/o/image%2F2.png?alt=media&token=3c397db8-6b61-471f-b19c-b3762dbbf766" },
         ];
 
-        const passList = ["강나리","청록","범지태"];
+        const passList = ["강나리","강진혁","강초아","고요한","매튜백","배은영","백람","범지태","양희진","유재이","유한결","윤태","이기조","이은정","이필우","임새언","임해신","장만우","정해찬","청록","최도화","한바다"];
         const card = document.getElementById('main-card');
 
         function triggerTransition(type) {
